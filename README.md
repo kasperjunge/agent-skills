@@ -1,4 +1,4 @@
-# agent-skills
+# agent-resources
 
 A collection of reusable Claude Code skills, slash commands, and subagents. Install them in any project using [skill-add](https://github.com/kasperjunge/skill-add).
 
