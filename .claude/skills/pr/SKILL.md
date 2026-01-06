@@ -12,7 +12,8 @@ Generate pull request descriptions that reviewers will love.
 1. Gather context (diff, commits, related files)
 2. Analyze the changes (what changed, why it matters)
 3. Generate description following the template
-4. Output ready-to-use markdown
+4. Present to user for approval
+5. Offer to create PR using `gh` CLI
 
 ## Step 1: Gather Context
 
@@ -131,3 +132,41 @@ Use this template:
 **Bug fixes**: Include what was broken, root cause, and how the fix addresses it
 
 **Dependencies**: Note any new dependencies and why they were chosen
+
+## Step 4: Offer to Create PR
+
+After presenting the generated description to the user, ask if they want to create the PR using `gh`:
+
+> Would you like me to create the PR now using `gh`?
+
+If the user accepts:
+
+1. Check if the current branch is pushed to remote:
+   ```bash
+   git rev-parse --abbrev-ref --symbolic-full-name @{u}
+   ```
+
+2. If not pushed, offer to push first:
+   ```bash
+   git push -u origin HEAD
+   ```
+
+3. Create the PR using `gh`:
+   ```bash
+   gh pr create --title "[PR title from summary]" --body "[generated description]"
+   ```
+
+4. Report the PR URL back to the user
+
+### Options to offer
+
+When asking about PR creation, present these options:
+- **Create PR** - Create as draft or ready for review
+- **Create as draft** - `gh pr create --draft`
+- **Copy to clipboard** - Just copy the description (if user prefers to create manually)
+
+### Error handling
+
+- If `gh` is not installed, inform the user: "The GitHub CLI (`gh`) is not installed. You can install it from https://cli.github.com/ or copy the description above to create the PR manually."
+- If not authenticated, guide them to run `gh auth login`
+- If there are uncommitted changes, warn before proceeding
